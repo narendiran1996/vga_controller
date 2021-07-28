@@ -40,11 +40,11 @@ text centered, minimum height=8em, minimum width=18em]
 \tikzstyle{Blk5}=[draw, fill=cyan!20, text width=7em,
 text centered, minimum height=8em, minimum width=8em]
 
-\tikzstyle{Blk6}=[draw, fill=green!20, text width=8em,
-text centered, minimum height=8em, minimum width=10em]
+\tikzstyle{Blk6}=[draw, fill=green!20, text width=5em,
+text centered, minimum height=5em, minimum width=5em]
 
 \tikzstyle{memBlk}=[draw, fill=yellow!20, text width=5em,
-text centered, minimum height=12em, minimum width=12em, rounded corners]
+text centered, minimum height=5em, minimum width=5em, rounded corners]
 
 
 \begin{tikzpicture}
@@ -91,6 +91,12 @@ text centered, minimum height=12em, minimum width=12em, rounded corners]
     \draw[->, line width=1.5pt] ([yshift=0em]arb.east) -- ([yshift=0em, xshift=6em]arb.east) node[right,pos=1] {G};
     \draw[->, line width=1.5pt] ([yshift=-1.5em]arb.east) -- ([yshift=-1.5em, xshift=6em]arb.east) node[right,pos=1] {B};
 
+
+
+    \node at ([yshift=-10em]arb) (bramMem) [memBlk] {Image Memory};
+
+    \draw[->, line width=1.5pt] ([xshift=-2em]arb.south) -- ([xshift=-2em]bramMem.north) node[left, pos=0.5] {addressIn};
+    \draw[->, line width=1.5pt] ([xshift=2em]bramMem.north) -- ([xshift=2em]arb.south) node[right, pos=0.5] {dataIn};
 
     \begin{pgfonlayer}{L1}
         % Compute a few helper coordinates
