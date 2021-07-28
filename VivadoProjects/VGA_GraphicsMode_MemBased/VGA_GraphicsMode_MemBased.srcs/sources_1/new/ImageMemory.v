@@ -3,39 +3,40 @@
 module ImageMemory
                 #
                 (
-                    parameter IMAGE_WIDTH = 320,
-                    parameter IMAGE_HEIGHT = 240,
-                    parameter RGBFormat = 1
+                    parameter IMAGE_WIDTH = 400,
+                    parameter IMAGE_HEIGHT = 200,
+                    parameter RGBFormat = 0,
+                    
+                    parameter RAMWIDTH = ((RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24)),
+                    parameter RAMADDBITS = $clog2(IMAGE_HEIGHT*IMAGE_WIDTH),
+                    parameter INIT_END_ADDR = IMAGE_WIDTH*IMAGE_HEIGHT
                 )
                 (
                     input wire clk,
-                    input wire rst,
-
-                    input wire [$clog2(IMAGE_HEIGHT*IMAGE_WIDTH)-1:0]address,
-                    output reg [(RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24)-1:0]dataOut
+                    input wire enable,
+                    input wire write_enable,
+                    input wire [RAMADDBITS-1:0]address,
+                    input wire [RAMWIDTH-1:0]inputData,
+                    output reg [RAMWIDTH-1:0]outputData
                 );
 
 
 localparam MEMFILELOC = "/mnt/18C846EDC846C928/vga_controller/ImageMemoryFile/MemoryFile.mem";
 
 (* RAM_STYLE="BLOCK" *)
- reg [(RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24)-1:0]REGMEM[0:(IMAGE_HEIGHT*IMAGE_WIDTH)-1];
+ reg [RAMWIDTH-1:0]REGMEM[0:(2**RAMADDBITS)-1];
 
 
 initial 
-    begin
-        $readmemh(MEMFILELOC, REGMEM);
-    end
+        $readmemh(MEMFILELOC, REGMEM, 0, INIT_END_ADDR);
 
 always @(posedge clk) 
     begin
-        if (rst == 1) 
+        if (enable == 1) 
             begin
-                dataOut <= 0;
-            end
-        else
-            begin
-                dataOut <= REGMEM[address];
+                if(write_enable == 1)
+                    REGMEM[address] = inputData;
+                outputData <= REGMEM[address];
             end
     end
 endmodule

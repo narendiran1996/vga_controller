@@ -33,11 +33,10 @@ module VGA_topModule
                     output wire vSYNC
                 );
 
-
-parameter IMAGE_WIDTH = 640;
-parameter IMAGE_HEIGHT = 320;
+parameter IMAGE_WIDTH = 320;
+parameter IMAGE_HEIGHT = 180;
 parameter MODES = 2;
-parameter RGBFormat = 1;
+parameter RGBFormat = 0;
 
 wire [12-1:0]xPixel;
 wire [12-1:0]yPixel;
@@ -64,7 +63,7 @@ VGA_Block
                 );
 
 wire [$clog2(IMAGE_HEIGHT*IMAGE_WIDTH)-1:0]VGA_Image_AddressOut;
-wire [(RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24)-1:0]VGA_Image_DataIn;
+wire [((RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24))-1:0]VGA_Image_DataIn;
 
 Address_RGB_Generator
                 #
@@ -89,7 +88,6 @@ Address_RGB_Generator
                 );
 
 
-
 ImageMemory
                 #
                 (
@@ -100,10 +98,11 @@ ImageMemory
                 IMBRamIns
                 (
                     .clk(clk),
-                    .rst(rst),
-
+                    .enable(1'b1),
+                    .write_enable(0),
                     .address(VGA_Image_AddressOut),
-                    .dataOut(VGA_Image_DataIn)
+                    .inputData(0),
+                    .outputData(VGA_Image_DataIn)
                 );
 
 

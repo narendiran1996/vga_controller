@@ -21,7 +21,7 @@ RGBForma
 module VGA_Block
                 #
                 (
-                    parameter MODES = 0,
+                    parameter MODES = 2,
 
                     // localparam DIV_BY = 16'h338F;// obtainted because
                     // see the output to get better understanding

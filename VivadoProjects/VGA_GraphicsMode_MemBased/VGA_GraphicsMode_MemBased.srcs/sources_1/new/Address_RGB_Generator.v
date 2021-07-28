@@ -20,13 +20,13 @@ RGBFormat
 module Address_RGB_Generator
                 #
                 (
-                    parameter IMAGE_WIDTH = 320,
-                    parameter IMAGE_HEIGHT = 240,
-                    parameter RGBFormat = 1
+                    parameter IMAGE_WIDTH = 400,
+                    parameter IMAGE_HEIGHT = 200,
+                    parameter RGBFormat = 0
                 )
                 (
                     output wire [$clog2(IMAGE_HEIGHT*IMAGE_WIDTH)-1:0]VGA_Image_AddressOut,
-                    input wire [(RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24)-1:0]VGA_Image_DataIn,                        
+                    input wire [((RGBFormat == 0) ? 16 : ((RGBFormat==1)? 8 : 24))-1:0]VGA_Image_DataIn,                        
 
 
                     input wire [12-1:0]xPixel,
