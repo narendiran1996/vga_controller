@@ -33,10 +33,10 @@ module VGA_topModule
                     output wire vSYNC
                 );
 
-parameter IMAGE_WIDTH = 320;
-parameter IMAGE_HEIGHT = 180;
-parameter MODES = 2;
-parameter RGBFormat = 0;
+parameter IMAGE_WIDTH = 640;
+parameter IMAGE_HEIGHT = 360;
+parameter MODES = 0;
+parameter RGBFormat = 1;
 
 wire [12-1:0]xPixel;
 wire [12-1:0]yPixel;
