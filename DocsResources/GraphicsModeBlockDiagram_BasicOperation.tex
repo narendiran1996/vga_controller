@@ -1,0 +1,115 @@
+\documentclass{standalone}
+
+
+\usepackage[a4paper, top=+1.005in, left=0.9in]{geometry}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{xcolor}
+\usepackage{amsmath,bm,times}
+\newcommand{\mx}[1]{\mathbf{\bm{#1}}} % Matrix command
+\newcommand{\vc}[1]{\mathbf{\bm{#1}}} % Vector command
+
+
+\pgfdeclarelayer{L1}
+\pgfdeclarelayer{L2}
+\pgfdeclarelayer{L3}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{L1,L2, L3,main,foreground}
+\definecolor{color2}{rgb}{0.8, 0.7, 1}
+\definecolor{color1}{rgb}{1,0,1}
+
+\begin{document}
+
+% \pagestyle{empty}
+\tikzstyle{clkGenBlk}=[draw, fill=blue!20, text width=9em,
+text centered, minimum height=5em, minimum width=8em]
+
+\tikzstyle{Blk}=[draw, fill=red!20, text width=9em,
+text centered, minimum height=12em, minimum width=9em]
+
+\tikzstyle{Blk2}=[draw, fill=green!20, text width=7em,
+text centered, minimum height=8em, minimum width=8em]
+
+\tikzstyle{Blk3}=[draw, fill=color1!20, text width=10em,
+text centered, minimum height=12em, minimum width=12em]
+
+\tikzstyle{Blk4}=[draw, fill=cyan!20, text width=7em,
+text centered, minimum height=8em, minimum width=18em]
+
+\tikzstyle{Blk5}=[draw, fill=cyan!20, text width=7em,
+text centered, minimum height=8em, minimum width=8em]
+
+\tikzstyle{Blk6}=[draw, fill=green!20, text width=5em,
+text centered, minimum height=5em, minimum width=5em]
+
+\tikzstyle{memBlk}=[draw, fill=yellow!20, text width=5em,
+text centered, minimum height=5em, minimum width=5em, rounded corners]
+
+
+\begin{tikzpicture}
+
+    \node at (-10em, 0) (clkInput) {\verb|systemClk|};
+
+    \node at (0, 0) (clkBlock) [clkGenBlk] {pixelClockGenerator};
+
+    \draw[->, line width=1.5pt] (clkInput) -- (clkBlock);
+
+    \node at (20em, 12em) (hcBlock) [Blk] {HorizontalCounter};
+    \node at (20em, -12em) (vcBlock) [Blk] {VerticalCounter};
+
+    \draw[->, line width=1.5pt]  (clkBlock.east) -- ++(1,0) -- ++(1,0) |-  (hcBlock.west);
+    \draw[->, line width=1.5pt]  (clkBlock.east) -- ++(1,0) -- ++(1,0) |- (vcBlock.west) node [pos=-0.05, left] {pixelClk};
+
+    \draw[->, line width=1.5pt] (hcBlock.south) -- (vcBlock.north) node [pos=0.5, left] {EndOfLine} node [pos=1, below] {Enable};
+
+
+    \node at (40em, 16em) (hsyckBlock) [Blk2] {HsyncGenerator};
+    \draw[->, line width=1.5pt] (hcBlock.east)  -- ++(1,0) -- ++(1,0) |-  (hsyckBlock.west) node [pos=0.1, left] {hCount};
+
+
+
+    \node at (40em, -16em) (vsyckBlock) [Blk2] {VsyncGenerator};
+    \draw[->, line width=1.5pt] (vcBlock.east)  -- ++(1,0) -- ++(1,0) |-  (vsyckBlock.west) node [pos=0.1, left] {vCount};
+
+
+
+    \node at (40em, -0) (pixelLocationGeneratorBlock) [Blk3] {xPixelyPixelGenerator};
+    \draw[->, line width=1.5pt] (hcBlock.east)  -- ++(1,0) -- ++(1,0) |-  ([yshift=2em]pixelLocationGeneratorBlock.west);
+    \draw[->, line width=1.5pt] (vcBlock.east)  -- ++(1,0) -- ++(1,0) |-  ([yshift=-2em]pixelLocationGeneratorBlock.west);
+
+
+    \node[Blk4] at ([xshift=23em]pixelLocationGeneratorBlock) (arb) {Basic Operation \& Address Generator};
+
+    \draw[->, line width=1.5pt] ([yshift=-3em]pixelLocationGeneratorBlock.east) -- ([yshift=-3em]arb.west) node[pos=0.5, above] {yPixel};
+    \draw[->, line width=1.5pt] ([yshift=0em]pixelLocationGeneratorBlock.east) -- ([yshift=-0em]arb.west) node[pos=0.5, above] {pixelDrawing};
+    \draw[->, line width=1.5pt] ([yshift=+3em]pixelLocationGeneratorBlock.east) -- ([yshift=+3em]arb.west) node[pos=0.5, above] {xPixel};
+
+    \draw[->, line width=1.5pt] (hsyckBlock.east) -- ([xshift=33em]hsyckBlock.east) node[right,pos=1] {hSYNC};
+    \draw[->, line width=1.5pt] (vsyckBlock.east) -- ([xshift=33em]vsyckBlock.east) node[right,pos=1] {vSYNC};
+    \draw[->, line width=1.5pt] ([yshift=1.5em]arb.east) -- ([yshift=1.5em, xshift=6em]arb.east) node[right,pos=1] {R};
+    \draw[->, line width=1.5pt] ([yshift=0em]arb.east) -- ([yshift=0em, xshift=6em]arb.east) node[right,pos=1] {G};
+    \draw[->, line width=1.5pt] ([yshift=-1.5em]arb.east) -- ([yshift=-1.5em, xshift=6em]arb.east) node[right,pos=1] {B};
+
+
+
+    \node at ([yshift=-10em]arb) (bramMem) [memBlk] {Image Memory};
+
+    \draw[->, line width=1.5pt] ([xshift=-2em]arb.south) -- ([xshift=-2em]bramMem.north) node[left, pos=0.5] {addressIn};
+    \draw[->, line width=1.5pt] ([xshift=2em]bramMem.north) -- ([xshift=2em]arb.south) node[right, pos=0.5] {dataIn};
+
+
+    \draw[->, line width=1.5pt] ([xshift=-3em, yshift=2em]arb.north) -- ([xshift=-3em]arb.north) node[pos=0,above] {rot\_sw};
+    \draw[->, line width=1.5pt] ([xshift=3em, yshift=2em]arb.north) -- ([xshift=3em]arb.north) node[pos=0,above] {scala\_sw};
+
+    \begin{pgfonlayer}{L1}
+        % Compute a few helper coordinates
+        \path (clkBlock.west |- hsyckBlock.north)+(-0.3,0.5) node (a) {};
+        \path (vsyckBlock.south -| pixelLocationGeneratorBlock.east)+(0.4,-0.3) node (b) {};
+        \path[fill=color2!20,rounded corners, draw=black!50, dashed] (a) rectangle (b);
+        \node at ([xshift=0em,yshift=-14em]clkBlock.south) {\Large \textcolor{red}{VGA Block}};
+    \end{pgfonlayer}
+\end{tikzpicture}
+
+
+\end{document}
