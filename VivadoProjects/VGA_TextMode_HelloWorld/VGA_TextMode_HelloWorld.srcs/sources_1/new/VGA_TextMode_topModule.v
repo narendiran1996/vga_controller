@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
 
+
 module VGA_TextMode_topModule
                 (
                     input wire clk,
