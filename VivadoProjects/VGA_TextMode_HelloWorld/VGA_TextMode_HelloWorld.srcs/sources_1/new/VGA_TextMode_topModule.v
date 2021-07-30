@@ -37,10 +37,10 @@ VGA_Block
                     .yPixel(yPixel),
                     .pixelDrawing(pixelDrawing),
 
-
                     .hSYNC(hSYNC),
                     .vSYNC(vSYNC)
                 );
+
 
 wire [$clog2(80*60)-1:0]currentCharacterPixelIndex;
 wire [$clog2(64)-1:0]characterXY;
@@ -53,6 +53,8 @@ TextMode_indexGenerator TMindexGenIns
                     .currentCharacterPixelIndex(currentCharacterPixelIndex),
                     .characterXY(characterXY)
                 );
+
+
 
 wire [$clog2(CHARACTER_SET_COUNT)-1:0]currentCharacterIndex;
 
@@ -92,7 +94,7 @@ TextMode_characterROM
                 );
 
 wire [16-1:0]currentPixel;
-assign currentPixel = (pixelDrawing == 1) ? 16'h0000 | {16{currentCharacter[characterXY]}} : 0;
+assign currentPixel = (pixelDrawing == 1) ? 16'h0000 | ~{16{currentCharacter[characterXY]}} : 0;
 
 assign R = (pixelDrawing) ? currentPixel[15:11] : 0;
 assign G = (pixelDrawing) ? currentPixel[10:5] : 0;
